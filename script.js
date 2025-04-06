@@ -133,3 +133,4 @@ function spawnFly() {
 
 //add fly on mouse click
 window.addEventListener('click', spawnFly);
+window.addEventListener('touchstart', spawnFly);
