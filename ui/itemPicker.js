@@ -22,8 +22,7 @@ export class ItemPickerUI {
 
       if (this.items[i]) {
         const img = document.createElement("img");
-        //insert into string item name
-        img.src = `assets/${this.items[i]}.png`;
+        img.src = `assets/items/${this.items[i]}.png`;
         img.alt = this.items[i];
         itemDiv.appendChild(img);
       }

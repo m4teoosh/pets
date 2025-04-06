@@ -15,8 +15,7 @@ export class Froggy extends Pet {
   }
 
   update(canvas, flies = []) {
-
-
+    
     const findNearbyFlies = () => {
       // check for nearby fly
       const nearbyFly = flies.find(fly => {

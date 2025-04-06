@@ -1,6 +1,7 @@
 import { Froggy } from './pets/froggy.js';
 import { Fly } from './pets/fly.js';
 import { ItemPickerUI } from './ui/itemPicker.js';
+import { Penguin } from './pets/penguin.js';
 
 
 const gameContainer = document.getElementById('gameContainer');
@@ -12,17 +13,17 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let froggy;
+let penguin;
 let flies = [];
 
 
 
-// createGrass();
-// createPond();
 createFrog();
+createPenguin();
 createFly();
 play();
 
-  
+
 
 function createFrog() {
   const idle = new Image();
@@ -37,7 +38,7 @@ function createFrog() {
   const land = new Image();
   land.src = 'assets/rob-the-frog/rob-the-frog-land.png';
 
-  froggy = new Froggy( {
+  froggy = new Froggy({
     idle: {
       sprite: idle,
       frames: [
@@ -45,7 +46,7 @@ function createFrog() {
       ]
     },
     jump: {
-      sprite: jump, 
+      sprite: jump,
       frames: [
         { x: 0, duration: 30 }
       ]
@@ -68,8 +69,8 @@ function createFrog() {
         { x: 0, duration: 30 }
       ]
     }
-  }, 96); 
-  
+  }, 96);
+
   froggy.spawn(canvas);
 }
 
@@ -77,7 +78,7 @@ function createFly() {
   const flySprite = new Image();
   flySprite.src = 'assets/fly-sheet2.png';
 
-  let fly = new Fly( {
+  let fly = new Fly({
     idle: {
       sprite: flySprite,
       frames: [
@@ -96,7 +97,40 @@ function createFly() {
 
   fly.spawn(canvas);
   flies.push(fly);
-  
+}
+
+function createPenguin() {
+  const idle = new Image();
+  idle.src = 'assets/lori-the-penguin/penguin-idle.png';
+
+  const left = new Image();
+  left.src = 'assets/lori-the-penguin/penguin-left.png';
+
+  const right = new Image();
+  right.src = 'assets/lori-the-penguin/penguin-right.png';
+
+  penguin = new Penguin({
+    idle: {
+      sprite: idle,
+      frames: [
+        { x: 0, duration: 10 },
+      ]
+    },
+    left: {
+      sprite: left,
+      frames: [
+        { x: 0, duration: 10 },
+      ]
+    },
+    right: {
+      sprite: right,
+      frames: [
+        { x: 0, duration: 10 },
+      ]
+    }
+  }, 96);
+
+  penguin.spawn(canvas);
 }
 
 function play() {
@@ -108,6 +142,9 @@ function play() {
 
   froggy.update(canvas, flies);
   froggy.draw(ctx);
+
+  penguin.update(canvas);
+  penguin.draw(ctx);
 
   flies.forEach(fly => {
     fly.update(canvas);
@@ -125,7 +162,7 @@ window.addEventListener('resize', () => {
 function spawnFly() {
   const flySprite = new Image();
   flySprite.src = 'assets/fly-sheet2.png';
-  
+
   const fly = new Fly({
     idle: {
       sprite: flySprite,
@@ -142,7 +179,7 @@ function spawnFly() {
       ]
     }
   }, 96);
-  
+
   fly.spawn(canvas);
   flies.push(fly);
 }
