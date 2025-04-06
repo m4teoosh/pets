@@ -5,7 +5,7 @@ import { Penguin } from './pets/penguin.js';
 
 
 const gameContainer = document.getElementById('gameContainer');
-const picker = new ItemPickerUI(gameContainer, ['fly', 'fish']);
+const picker = new ItemPickerUI(gameContainer, ['fly', 'fish', 'flower']);
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
