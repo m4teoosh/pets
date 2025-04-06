@@ -1,11 +1,11 @@
 import { Pet } from './pet.js';
 
-const JUMP_COOLDOWN = 50;
+const STATE_COOLDOWN = 50;
 
 export class Froggy extends Pet {
   constructor(animations, petSize) {
     super(animations, petSize);
-    this.jumpCooldown = JUMP_COOLDOWN;
+    this.stateCooldown = STATE_COOLDOWN;
     this.idleTime = 0;
     this.hopDistance = 50;      // Pixels per hop
 
@@ -15,19 +15,40 @@ export class Froggy extends Pet {
   }
 
   update(canvas, flies = []) {
-    // check for nearby fly
-    const nearbyFly = flies.find(fly => {
-      const dx = fly.x - this.x;
-      const dy = fly.y - this.y;
-      const dist = Math.sqrt(dx ** 2 + dy ** 2);
-      return dist < 200; // Eating range
-    });
 
-    if (nearbyFly && this.state !== 'tongue') {
-      this.targetFly = nearbyFly;
-      this.tongueTimer = 15; // frames
-      this.setState('tongue');
-      return;
+
+    const findNearbyFlies = () => {
+      // check for nearby fly
+      const nearbyFly = flies.find(fly => {
+        const dx = fly.x - this.x;
+        const dy = fly.y - this.y;
+        const dist = Math.sqrt(dx ** 2 + dy ** 2);
+        return dist < 200; // Eating range
+      });
+
+      if (nearbyFly && this.state !== 'tongue') {
+        this.targetFly = nearbyFly;
+        this.tongueTimer = 15; // frames
+        return;
+      }
+    }
+
+    const aquireRandomTarget = () => {
+      this.idleTime++;
+      if (this.idleTime > 300 + Math.floor(Math.random() * 200)) {
+        this.target = {
+          x: Math.random() * canvas.width,
+          y: Math.random() * (canvas.height - 100)
+        };
+        this.setState('crouch');
+        this.idleTime = 0;
+      }
+    }
+
+    findNearbyFlies();
+
+    if (!this.target) {
+      aquireRandomTarget();
     }
 
     // usual state handling
@@ -41,65 +62,67 @@ export class Froggy extends Pet {
   }
 
   idle(canvas) {
-    this.idleTime++;
-    if (this.idleTime > 300 + Math.floor(Math.random() * 200)) {
-      this.targetX = Math.random() * canvas.width;
-      this.targetY = Math.random() * (canvas.height - 100);
+    if (this.stateCooldown > 0) {
+      this.stateCooldown--;
+      return;
+    }
+    this.stateCooldown = STATE_COOLDOWN;
+
+    if (this.targetFly) {
+      this.setState('tongue');
+      return;
+    } else if (this.target) {
       this.setState('crouch');
-      this.idleTime = 0;
+      return;
     }
   }
 
   crouch(canvas) {
-    if (this.jumpCooldown > 0) {
-      this.jumpCooldown--;
+    if (this.stateCooldown > 0) {
+      this.stateCooldown--;
       return;
     }
-    this.jumpCooldown = JUMP_COOLDOWN;
-    console.log("Preparing to jump towards target:", this.targetX, this.targetY);
-    const deltaX = this.targetX - this.x;
-    const deltaY = this.targetY - this.y;
+    this.stateCooldown = STATE_COOLDOWN;
+    console.log("Preparing to jump towards target:", this.target);
+    const deltaX = this.target.x - this.x;
+    const deltaY = this.target.y - this.y;
     this.distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
     this.stepX = (deltaX / this.distance) * this.hopDistance;
     this.stepY = (deltaY / this.distance) * this.hopDistance;
-    
-    this.x += this.stepX; 
+
+    this.x += this.stepX;
     this.y += this.stepY;
 
     this.setState('jump');
   }
 
   jump(canvas) {
-    if (this.jumpCooldown > 0) {
-      this.jumpCooldown--;
+    if (this.stateCooldown > 0) {
+      this.stateCooldown--;
       return;
     }
-    this.jumpCooldown = JUMP_COOLDOWN;
-  
-    this.x += this.stepX; 
+    this.stateCooldown = STATE_COOLDOWN;
+
+    this.x += this.stepX;
     this.y += this.stepY;
 
-    if (this.distance > this.hopDistance) {
-      this.setState('land');
-    } else {
-      this.x = this.targetX;
-      this.y = this.targetY;
-      this.setState('land');
+    if (this.distance < this.hopDistance) {
+      this.x = this.target.x;
+      this.y = this.target.y;
+      this.target = null;
     }
+
+    this.setState('land');
   }
 
 
   land(canvas) {
-    if (this.jumpCooldown > 0) {
-      this.jumpCooldown--;
+    if (this.stateCooldown > 0) {
+      this.stateCooldown--;
       return;
-    } else if (this.x === this.targetX && this.y === this.targetY) {
-      this.setState('idle');
     }
-    else {
-      this.jumpCooldown = JUMP_COOLDOWN;
-      this.setState('crouch');
-    }
+    this.stateCooldown = STATE_COOLDOWN;
+    this.setState('idle');
   }
 
   tongue(canvas, flies) {
