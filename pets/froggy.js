@@ -185,7 +185,7 @@ export class Froggy extends Pet {
 
     if (this.state === 'tongue') {
       const originX = this.x + this.petSize / 2;
-      const originY = this.y + this.petSize / 2;
+      const originY = 9 + this.y + this.petSize / 2;
 
       let targetX, targetY;
 
@@ -213,8 +213,15 @@ export class Froggy extends Pet {
       ctx.moveTo(originX, originY);
       ctx.lineTo(targetX, targetY);
       ctx.strokeStyle = 'red';
-      ctx.lineWidth = 6;
+      ctx.lineWidth = 4;
       ctx.stroke();
+
+
+      // //mark the square of the pet 
+      // ctx.strokeStyle = 'blue';
+      // ctx.strokeRect(this.x, this.y, this.petSize, this.petSize);
+  
+
     }
   }
 }
