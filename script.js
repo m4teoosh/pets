@@ -106,9 +106,7 @@ window.addEventListener('resize', () => {
   canvas.height = window.innerHeight;
 });
 
-//add fly on mouse click
-window.addEventListener('click', () => {
-  console.log('click');
+function spawnFly() {
   const flySprite = new Image();
   flySprite.src = 'assets/fly-sheet2.png';
   
@@ -131,4 +129,7 @@ window.addEventListener('click', () => {
   
   fly.spawn(canvas);
   flies.push(fly);
-});
+}
+
+//add fly on mouse click
+window.addEventListener('click', spawnFly);
