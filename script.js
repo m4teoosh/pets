@@ -1,6 +1,10 @@
 import { Froggy } from './pets/froggy.js';
 import { Fly } from './pets/fly.js';
-import { Pet } from './pets/pet.js';
+import { ItemPickerUI } from './ui/itemPicker.js';
+
+
+const gameContainer = document.getElementById('gameContainer');
+const picker = new ItemPickerUI(gameContainer, ['fly', 'fish']);
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -10,9 +14,15 @@ canvas.height = window.innerHeight;
 let froggy;
 let flies = [];
 
+
+
+// createGrass();
+// createPond();
 createFrog();
 createFly();
 play();
+
+  
 
 function createFrog() {
   const idle = new Image();
@@ -43,7 +53,7 @@ function createFrog() {
     crouch: {
       sprite: crouch,
       frames: [
-        { x: 0, duration: 30 }
+        { x: 0, duration: 33 }
       ]
     },
     land: {
@@ -91,6 +101,11 @@ function createFly() {
 
 function play() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  //draw background grass
+  ctx.fillStyle = 'pink';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+
   froggy.update(canvas, flies);
   froggy.draw(ctx);
 
@@ -98,6 +113,7 @@ function play() {
     fly.update(canvas);
     fly.draw(ctx);
   });
+
   requestAnimationFrame(play);
 }
 
@@ -133,3 +149,4 @@ function spawnFly() {
 
 //add fly on mouse click
 canvas.addEventListener('click', spawnFly);
+
