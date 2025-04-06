@@ -58,7 +58,7 @@ function createFrog() {
         { x: 0, duration: 30 }
       ]
     }
-  }, 160); 
+  }, 96); 
   
   froggy.spawn(canvas);
 }
